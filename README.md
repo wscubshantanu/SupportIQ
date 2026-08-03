@@ -1,45 +1,67 @@
 # SupportIQ
 
-AI-Powered Customer Support Ticket Intelligence Platform.
+## AI-Powered Customer Support Ticket Intelligence Platform
+
+SupportIQ is a full-stack AI-powered customer support ticket management system. It helps organizations manage customer support tickets efficiently using Artificial Intelligence.
 
 ## Features
 
-- User authentication
-- JWT security
-- Role-based access control
-- Customer support tickets
-- AI ticket classification
-- Priority prediction
-- Sentiment analysis
-- Similar ticket search
-- Suggested responses
-- Analytics dashboard
+- User Authentication (JWT)
+- Role-Based Access Control (Customer, Support Agent, Admin)
+- Ticket Management
+- AI Ticket Classification
+- Priority Prediction
+- Sentiment Analysis
+- Analytics Dashboard
+- Docker Support
 
-## Technology Stack
+## Tech Stack
 
+### Frontend
 - React
+- Vite
+- Tailwind CSS
+
+### Backend
 - FastAPI
+- SQLAlchemy
 - PostgreSQL
+
+### AI/ML
+- Python
 - Scikit-learn
 - NLP
-- Docker
 
-## AI Pipeline
+## Project Structure
 
-Customer Ticket
-↓
-Text Preprocessing
-↓
-TF-IDF Vectorization
-↓
-Machine Learning Model
-↓
-Category + Priority + Sentiment
+```text
+SupportIQ/
+│
+├── backend/
+├── frontend/
+├── ml/
+├── docker-compose.yml
+└── README.md
+```
 
-## How to Run
+## Installation
 
 ### Backend
 
 ```bash
 cd backend
+pip install -r requirements.txt
 uvicorn app.main:app --reload
+```
+
+### Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+## Author
+
+Shantanu Kalhapure
