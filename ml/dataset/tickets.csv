@@ -1,0 +1,104 @@
+text,category,priority,sentiment
+I cannot login to my account,Account,High,Negative
+I want to cancel my subscription,Subscription,Medium,Neutral
+Thank you for solving my problem,Technical,Low,Positive
+I was charged twice,Billing,High,Negative
+Application is completely down,Technical,Critical,Negative
+I need to update my email,Account,Medium,Neutral
+The payment failed,Billing,High,Negative
+The application is working perfectly,Technical,Low,Positive
+I want a refund,Billing,High,Negative
+I need help changing my password,Account,Medium,Neutral
+My account has been locked,Account,High,Negative
+Unable to verify my email address,Account,Medium,Neutral
+I forgot my username,Account,Low,Neutral
+Please unlock my account,Account,High,Negative
+I cannot update my phone number,Account,Medium,Neutral
+My profile picture is not uploading,Account,Low,Negative
+I want to change my registered email,Account,Medium,Neutral
+Password reset link expired,Account,High,Negative
+Unable to enable two-factor authentication,Account,High,Negative
+Account verification is pending,Account,Medium,Neutral
+The website is loading very slowly,Technical,Medium,Negative
+Application crashes after login,Technical,Critical,Negative
+Unable to upload documents,Technical,High,Negative
+Server timeout error occurred,Technical,High,Negative
+The dashboard is not opening,Technical,High,Negative
+Search feature is not working,Technical,Medium,Negative
+Notifications are not showing,Technical,Medium,Negative
+Unable to download reports,Technical,Medium,Negative
+Mobile app freezes frequently,Technical,High,Negative
+API returns internal server error,Technical,Critical,Negative
+The software is running smoothly,Technical,Low,Positive
+The latest update fixed my issue,Technical,Low,Positive
+Everything is working as expected,Technical,Low,Positive
+Excellent application performance,Technical,Low,Positive
+I am impressed with the new update,Technical,Low,Positive
+Invoice was not generated,Billing,Medium,Negative
+Payment is still pending,Billing,High,Negative
+Need a copy of my invoice,Billing,Low,Neutral
+I was billed incorrectly,Billing,High,Negative
+My refund is delayed,Billing,High,Negative
+Payment gateway is failing,Billing,Critical,Negative
+Subscription amount is incorrect,Billing,High,Negative
+Need GST invoice,Billing,Low,Neutral
+I have not received my refund,Billing,High,Negative
+Auto payment failed,Billing,Medium,Negative
+Thank you for processing my refund,Billing,Low,Positive
+Billing support was very helpful,Billing,Low,Positive
+Need pricing information,Subscription,Low,Neutral
+Upgrade my subscription plan,Subscription,Medium,Neutral
+Downgrade my subscription,Subscription,Medium,Neutral
+Subscription renewal failed,Subscription,High,Negative
+Premium features are missing,Subscription,Medium,Negative
+I want to renew my subscription,Subscription,Medium,Positive
+Cancel auto renewal,Subscription,Medium,Neutral
+Need enterprise pricing,Subscription,Low,Neutral
+Subscription expired unexpectedly,Subscription,High,Negative
+Trial period ended too soon,Subscription,Medium,Negative
+I love the premium features,Subscription,Low,Positive
+Support team was very polite,Complaint,Low,Positive
+Customer support never replied,Complaint,High,Negative
+The issue remains unresolved,Complaint,Critical,Negative
+Very poor customer experience,Complaint,High,Negative
+Support executive disconnected the call,Complaint,High,Negative
+The resolution took too long,Complaint,Medium,Negative
+I appreciate your quick response,Complaint,Low,Positive
+The representative was very helpful,Complaint,Low,Positive
+Nobody contacted me,Complaint,High,Negative
+The issue was resolved quickly,Complaint,Low,Positive
+Delivery was delayed by one week,Complaint,Medium,Negative
+Package arrived damaged,Complaint,High,Negative
+Need status of my order,Complaint,Low,Neutral
+Product quality is excellent,Complaint,Low,Positive
+Received wrong product,Complaint,High,Negative
+Unable to track shipment,Complaint,Medium,Negative
+Delivery executive was courteous,Complaint,Low,Positive
+Shipping information is incorrect,Complaint,Medium,Negative
+Need replacement for damaged item,Complaint,High,Negative
+Order was cancelled automatically,Complaint,High,Negative
+Can I get a product demo,Sales,Low,Neutral
+Need quotation for bulk purchase,Sales,Medium,Neutral
+Interested in enterprise solution,Sales,Medium,Positive
+Please contact me for pricing,Sales,Low,Neutral
+Looking for annual subscription,Sales,Medium,Positive
+Need information about premium plan,Sales,Low,Neutral
+Sales executive was very helpful,Sales,Low,Positive
+Need discount for educational use,Sales,Medium,Neutral
+Interested in reseller partnership,Sales,Medium,Positive
+Requesting product brochure,Sales,Low,Neutral
+I want to schedule a meeting,Sales,Low,Positive
+Need custom pricing for my company,Sales,Medium,Neutral
+Product features look amazing,Sales,Low,Positive
+Interested in API integration,Sales,Medium,Positive
+Need a free trial extension,Sales,Low,Neutral
+Cannot connect to VPN,Technical,High,Negative
+Database connection failed,Technical,Critical,Negative
+Printer integration is not working,Technical,Medium,Negative
+Email notifications are delayed,Technical,Medium,Negative
+Live chat is unavailable,Technical,High,Negative
+Backup process failed,Technical,Critical,Negative
+Unable to export data,Technical,Medium,Negative
+Dark mode is not available,Technical,Low,Neutral
+The system is very fast today,Technical,Low,Positive
+Excellent customer portal experience,Technical,Low,Positive

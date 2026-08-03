@@ -1,0 +1,40 @@
+from sqlalchemy import create_engine
+from sqlalchemy.orm import declarative_base, sessionmaker
+from dotenv import load_dotenv
+import os
+
+
+# Load variables from the .env file
+load_dotenv()
+
+
+# Read the database URL
+DATABASE_URL = os.getenv(
+    "DATABASE_URL",
+    "sqlite:///./supportiq.db"
+)
+
+
+# Create database engine
+engine = create_engine(DATABASE_URL)
+
+# Create database session
+SessionLocal = sessionmaker(
+    autocommit=False,
+    autoflush=False,
+    bind=engine
+)
+
+
+# Base class for database models
+Base = declarative_base()
+
+
+# Database dependency
+def get_db():
+    db = SessionLocal()
+
+    try:
+        yield db
+    finally:
+        db.close()

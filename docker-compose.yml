@@ -1,0 +1,26 @@
+services:
+
+  backend:
+
+    build: ./backend
+
+    ports:
+
+      - "8000:8000"
+
+
+  database:
+
+    image: postgres:15
+
+    environment:
+
+      POSTGRES_USER: postgres
+
+      POSTGRES_PASSWORD: password
+
+      POSTGRES_DB: supportiq
+
+    ports:
+
+      - "5432:5432"
