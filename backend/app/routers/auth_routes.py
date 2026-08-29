@@ -1,8 +1,13 @@
+# ==========================================
+# SupportIQ - Authentication Router
+# ==========================================
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.models import User
+
 from app.schemas import (
     UserCreate,
     UserResponse,
@@ -15,55 +20,64 @@ from app.security import (
     create_access_token
 )
 
-# Create Router
+
 router = APIRouter(
     prefix="/auth",
     tags=["Authentication"]
 )
 
 
-# -------------------------
-# Test API
-# -------------------------
-@router.get("/test")
-def test():
-    return {
-        "message": "Authentication API Working Successfully"
-    }
+# ==========================================
+# REGISTER
+# ==========================================
 
-
-# -------------------------
-# Register User
-# -------------------------
 @router.post(
     "/register",
     response_model=UserResponse
 )
-def register_user(
-    user: UserCreate,
+def register(
+    user_data: UserCreate,
     db: Session = Depends(get_db)
 ):
 
-    # Check if email already exists
-    existing_user = db.query(User).filter(
-        User.email == user.email
-    ).first()
+    # --------------------------------------
+    # Check existing user
+    # --------------------------------------
+
+    existing_user = (
+        db.query(User)
+        .filter(
+            User.email == user_data.email
+        )
+        .first()
+    )
 
     if existing_user:
+
         raise HTTPException(
             status_code=400,
             detail="Email already registered"
         )
 
-    # Create new user
-    new_user = User(
-        name=user.name,
-        email=user.email,
-        password=hash_password(user.password),
-        role=user.role
+    # --------------------------------------
+    # Hash password
+    # --------------------------------------
+
+    hashed_password = hash_password(
+        user_data.password
     )
 
-    # Save to database
+    # --------------------------------------
+    # Create user
+    # --------------------------------------
+
+    new_user = User(
+        name=user_data.name,
+        email=user_data.email,
+        password=hashed_password,
+        role="customer"
+    )
+
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
@@ -71,41 +85,106 @@ def register_user(
     return new_user
 
 
-# -------------------------
-# Login User
-# -------------------------
+# ==========================================
+# LOGIN
+# ==========================================
+
 @router.post("/login")
-def login_user(
+def login(
     login_data: LoginRequest,
     db: Session = Depends(get_db)
 ):
 
-    # Find user by email
-    user = db.query(User).filter(
-        User.email == login_data.email
-    ).first()
+    print("\n==========================================")
+    print("🔥 LOGIN REQUEST")
+    print("EMAIL:", login_data.email)
+    print("==========================================")
 
-    # Check user exists
-    if not user:
+    # --------------------------------------
+    # Find user
+    # --------------------------------------
+
+    user = (
+        db.query(User)
+        .filter(
+            User.email == login_data.email
+        )
+        .first()
+    )
+
+    if user is None:
+
+        print("❌ USER NOT FOUND")
+
         raise HTTPException(
             status_code=401,
             detail="Invalid email or password"
         )
 
+    print("User found:", user.email)
+
+    # --------------------------------------
     # Verify password
-    if not verify_password(
+    # --------------------------------------
+
+    password_valid = verify_password(
         login_data.password,
         user.password
-    ):
+    )
+
+    print(
+        "Password valid:",
+        password_valid
+    )
+
+    if not password_valid:
+
+        print("❌ PASSWORD INVALID")
+
         raise HTTPException(
             status_code=401,
             detail="Invalid email or password"
         )
 
-    # Generate JWT Token
-    access_token = create_access_token(user.id)
+    print("LOGIN SUCCESS")
+    print("User ID:", user.id)
+    print("User Role:", user.role)
+
+    # --------------------------------------
+    # CREATE JWT
+    # --------------------------------------
+
+    token_data = {
+        "sub": str(user.id),
+        "email": user.email,
+        "role": user.role
+    }
+
+    access_token = create_access_token(
+        token_data
+    )
+
+    print("✅ ACCESS TOKEN CREATED")
+    print("TOKEN LENGTH:", len(access_token))
+    print("TOKEN USER ID:", user.id)
+    print("TOKEN ROLE:", user.role)
+
+    # --------------------------------------
+    # RETURN LOGIN RESPONSE
+    # --------------------------------------
 
     return {
         "access_token": access_token,
-        "token_type": "bearer"
+        "token_type": "bearer",
+
+        # IMPORTANT:
+        # Login.jsx uses data.role
+        "role": user.role,
+
+        "user": {
+            "id": user.id,
+            "name": user.name,
+            "email": user.email,
+            "role": user.role
+        }
     }

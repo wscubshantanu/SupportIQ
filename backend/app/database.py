@@ -1,24 +1,46 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import declarative_base, sessionmaker
-from dotenv import load_dotenv
 import os
 
+from dotenv import load_dotenv
+from sqlalchemy import create_engine, text
+from sqlalchemy.orm import sessionmaker, declarative_base
 
-# Load variables from the .env file
+
+# ============================================================
+# Load Environment Variables
+# ============================================================
+
 load_dotenv()
 
 
-# Read the database URL
-DATABASE_URL = os.getenv(
-    "DATABASE_URL",
-    "sqlite:///./supportiq.db"
+# ============================================================
+# Database Configuration
+# ============================================================
+
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+
+if not DATABASE_URL:
+    raise RuntimeError(
+        "DATABASE_URL is not configured. "
+        "Please add DATABASE_URL to backend/.env"
+    )
+
+
+# ============================================================
+# SQLAlchemy Engine
+# ============================================================
+
+engine = create_engine(
+    DATABASE_URL,
+    pool_pre_ping=True,
+    pool_recycle=1800,
 )
 
 
-# Create database engine
-engine = create_engine(DATABASE_URL)
+# ============================================================
+# Database Session
+# ============================================================
 
-# Create database session
 SessionLocal = sessionmaker(
     autocommit=False,
     autoflush=False,
@@ -26,15 +48,51 @@ SessionLocal = sessionmaker(
 )
 
 
-# Base class for database models
+# ============================================================
+# Base Model
+# ============================================================
+
 Base = declarative_base()
 
 
-# Database dependency
+# ============================================================
+# Database Dependency
+# ============================================================
+
 def get_db():
+    """
+    Create a database session for each request
+    and close it after the request finishes.
+    """
+
     db = SessionLocal()
 
     try:
         yield db
+
     finally:
         db.close()
+
+
+# ============================================================
+# Database Health Check
+# ============================================================
+
+def check_database_connection() -> bool:
+    """
+    Check whether PostgreSQL is reachable.
+    """
+
+    try:
+
+        with engine.connect() as connection:
+
+            connection.execute(
+                text("SELECT 1")
+            )
+
+        return True
+
+    except Exception:
+
+        return False

@@ -1,38 +1,45 @@
-# Import SQLAlchemy column types
-from sqlalchemy import Column, Integer, String, Text, DateTime
-
-# Import datetime
 from datetime import datetime
 
-# Import Base
+from sqlalchemy import (
+    Column,
+    DateTime,
+    ForeignKey,
+    Integer,
+    String,
+    Text,
+)
+from sqlalchemy.orm import relationship
+
 from app.database import Base
 
 
-# =========================
-# User Database Table
-# =========================
+# ============================================================
+# User Model
+# ============================================================
 
 class User(Base):
 
     __tablename__ = "users"
 
+    # --------------------------------------------------------
+    # Primary Key
+    # --------------------------------------------------------
 
-    # User ID
     id = Column(
         Integer,
         primary_key=True,
         index=True
     )
 
+    # --------------------------------------------------------
+    # User Information
+    # --------------------------------------------------------
 
-    # User name
     name = Column(
         String(100),
         nullable=False
     )
 
-
-    # Email
     email = Column(
         String(150),
         unique=True,
@@ -40,89 +47,129 @@ class User(Base):
         index=True
     )
 
-
+    # --------------------------------------------------------
     # Password
+    # --------------------------------------------------------
+
+    # Stores the bcrypt password hash.
+    # Never store plain-text passwords.
     password = Column(
         String(255),
         nullable=False
     )
 
-
+    # --------------------------------------------------------
     # User Role
-    # customer / support_agent / admin
+    # --------------------------------------------------------
 
+    # Supported roles:
+    # customer
+    # support_agent
+    # admin
     role = Column(
         String(50),
-        default="customer",
-        nullable=False
+        nullable=False,
+        default="customer"
+    )
+
+    # --------------------------------------------------------
+    # Relationships
+    # --------------------------------------------------------
+
+    tickets = relationship(
+        "Ticket",
+        back_populates="user",
+        foreign_keys="Ticket.created_by"
     )
 
 
-
-# =========================
-# Ticket Database Table
-# =========================
+# ============================================================
+# Ticket Model
+# ============================================================
 
 class Ticket(Base):
 
     __tablename__ = "tickets"
 
+    # --------------------------------------------------------
+    # Primary Key
+    # --------------------------------------------------------
 
-    # Ticket ID
     id = Column(
         Integer,
         primary_key=True,
         index=True
     )
 
+    # --------------------------------------------------------
+    # Ticket Information
+    # --------------------------------------------------------
 
-    # Ticket title
     title = Column(
         String(255),
         nullable=False
     )
 
-
-    # Ticket description
     description = Column(
         Text,
         nullable=False
     )
 
+    # --------------------------------------------------------
+    # AI Fields
+    # --------------------------------------------------------
 
-    # AI category prediction
+    # AI predicted category
     category = Column(
-        String(100)
+        String(100),
+        nullable=True
     )
 
-
-    # AI priority prediction
+    # AI predicted priority
     priority = Column(
-        String(50)
+        String(50),
+        nullable=True
     )
 
-
-    # AI sentiment prediction
+    # AI predicted sentiment
     sentiment = Column(
-        String(50)
+        String(50),
+        nullable=True
     )
 
+    # --------------------------------------------------------
+    # Ticket Status
+    # --------------------------------------------------------
 
-    # Ticket status
     status = Column(
         String(50),
+        nullable=False,
         default="Open"
     )
 
+    # --------------------------------------------------------
+    # Ticket Owner
+    # --------------------------------------------------------
 
-    # User who created ticket
     created_by = Column(
-        Integer
+        Integer,
+        ForeignKey("users.id"),
+        nullable=True,
+        index=True
     )
 
+    user = relationship(
+        "User",
+        back_populates="tickets",
+        foreign_keys=[created_by]
+    )
 
-    # Created time
+    # --------------------------------------------------------
+    # Created Timestamp
+    # --------------------------------------------------------
+
     created_at = Column(
         DateTime,
+        nullable=False,
         default=datetime.utcnow
     )
