@@ -3,9 +3,8 @@
 // ==========================================
 
 import React from "react";
-
 import {
-    BrowserRouter,
+    HashRouter,
     Routes,
     Route,
     Navigate
@@ -16,6 +15,7 @@ import {
 // ==========================================
 
 import Login from "./pages/Login";
+import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import Tickets from "./pages/Tickets";
 import CreateTicket from "./pages/CreateTicket";
@@ -34,17 +34,14 @@ import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
     return (
-        <BrowserRouter>
-
+        <HashRouter>
             <Routes>
+                {/* LOGIN & REGISTER */}
+                <Route path="/" element={<Login />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
 
-                {/* LOGIN */}
-                <Route
-                    path="/"
-                    element={<Login />}
-                />
-
-                {/* DASHBOARD */}
+                {/* PROTECTED ROUTES */}
                 <Route
                     path="/dashboard"
                     element={
@@ -53,8 +50,6 @@ function App() {
                         </ProtectedRoute>
                     }
                 />
-
-                {/* TICKETS */}
                 <Route
                     path="/tickets"
                     element={
@@ -63,8 +58,6 @@ function App() {
                         </ProtectedRoute>
                     }
                 />
-
-                {/* CREATE TICKET */}
                 <Route
                     path="/create-ticket"
                     element={
@@ -73,8 +66,6 @@ function App() {
                         </ProtectedRoute>
                     }
                 />
-
-                {/* TICKET DETAILS */}
                 <Route
                     path="/tickets/:ticketId"
                     element={
@@ -83,8 +74,6 @@ function App() {
                         </ProtectedRoute>
                     }
                 />
-
-                {/* ANALYTICS */}
                 <Route
                     path="/analytics"
                     element={
@@ -94,20 +83,10 @@ function App() {
                     }
                 />
 
-                {/* UNKNOWN ROUTE */}
-                <Route
-                    path="*"
-                    element={
-                        <Navigate
-                            to="/"
-                            replace
-                        />
-                    }
-                />
-
+                {/* FALLBACK REDIRECT */}
+                <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
-
-        </BrowserRouter>
+        </HashRouter>
     );
 }
 

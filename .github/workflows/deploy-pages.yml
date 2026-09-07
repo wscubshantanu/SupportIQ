@@ -1,0 +1,61 @@
+# ==========================================
+# SupportIQ - GitHub Pages Deployment
+# ==========================================
+# Automatically builds the React frontend and
+# deploys the production bundle to GitHub Pages
+# on every push to the main branch.
+
+name: Deploy SupportIQ to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: frontend-ui/package-lock.json
+
+      - name: Install Dependencies
+        working-directory: frontend-ui
+        run: npm ci
+
+      - name: Build Production Bundle
+        working-directory: frontend-ui
+        run: npm run build
+
+      - name: Setup GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: frontend-ui/dist
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

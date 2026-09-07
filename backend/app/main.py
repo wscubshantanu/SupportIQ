@@ -18,24 +18,30 @@ app = FastAPI(
 # CORS Configuration
 # ---------------------------------
 
-origins = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-]
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=[
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "http://localhost:4173",
+        "http://127.0.0.1:4173",
+        "http://localhost:3000",
+    ],
+    allow_origin_regex=r"https://.*\.github\.io.*",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 # ---------------------------------
-# Create Database Tables
+# Create Database Tables Safely
 # ---------------------------------
 
-Base.metadata.create_all(bind=engine)
+try:
+    Base.metadata.create_all(bind=engine)
+    print("[DATABASE] Database tables verified / created.")
+except Exception as db_err:
+    print(f"[DATABASE] Warning: Unable to initialize tables on startup: {db_err}")
 
 # ---------------------------------
 # Register Routers

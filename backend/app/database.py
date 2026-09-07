@@ -18,23 +18,21 @@ load_dotenv()
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
-
 if not DATABASE_URL:
-    raise RuntimeError(
-        "DATABASE_URL is not configured. "
-        "Please add DATABASE_URL to backend/.env"
-    )
-
+    DATABASE_URL = "sqlite:///./supportiq.db"
+    print("[DATABASE] No DATABASE_URL found. Defaulting to local SQLite: supportiq.db")
 
 # ============================================================
 # SQLAlchemy Engine
 # ============================================================
 
-engine = create_engine(
-    DATABASE_URL,
-    pool_pre_ping=True,
-    pool_recycle=1800,
-)
+engine_args = {"pool_pre_ping": True}
+if DATABASE_URL.startswith("sqlite"):
+    engine_args["connect_args"] = {"check_same_thread": False}
+else:
+    engine_args["pool_recycle"] = 1800
+
+engine = create_engine(DATABASE_URL, **engine_args)
 
 
 # ============================================================

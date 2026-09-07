@@ -49,7 +49,7 @@ ACCESS_TOKEN_EXPIRE_MINUTES = int(
 )
 
 print("==========================================")
-print("🔐 SUPPORTIQ JWT CONFIGURATION")
+print("[SECURITY] SUPPORTIQ JWT CONFIGURATION")
 print("==========================================")
 print("Algorithm:", ALGORITHM)
 print(
@@ -93,7 +93,7 @@ def verify_password(
     except Exception as error:
 
         print(
-            "❌ PASSWORD VERIFICATION ERROR:",
+            "[ERROR] PASSWORD VERIFICATION ERROR:",
             error
         )
 
@@ -139,7 +139,7 @@ def create_access_token(data: dict) -> str:
 
     print("")
     print("==========================================")
-    print("✅ ACCESS TOKEN CREATED")
+    print("[OK] ACCESS TOKEN CREATED")
     print("==========================================")
     print("Token length:", len(encoded_jwt))
     print("Token data:", data)
@@ -168,7 +168,7 @@ def get_current_user(
 
     print("")
     print("==========================================")
-    print("🔥 USER AUTHENTICATION")
+    print("[AUTH] USER AUTHENTICATION")
     print("==========================================")
 
     # --------------------------------------------------------
@@ -178,7 +178,7 @@ def get_current_user(
     if credentials is None:
 
         print(
-            "❌ NO AUTHORIZATION HEADER"
+            "[AUTH] NO AUTHORIZATION HEADER"
         )
 
         raise HTTPException(
@@ -221,7 +221,7 @@ def get_current_user(
     try:
 
         print(
-            "🔥 DECODING JWT..."
+            "[AUTH] DECODING JWT..."
         )
 
         payload = jwt.decode(
@@ -231,7 +231,7 @@ def get_current_user(
         )
 
         print(
-            "✅ JWT DECODED"
+            "[OK] JWT DECODED"
         )
 
         print(
@@ -253,7 +253,7 @@ def get_current_user(
         if user_id is None:
 
             print(
-                "❌ JWT SUB IS MISSING"
+                "[AUTH] JWT SUB IS MISSING"
             )
 
             raise credentials_exception
@@ -268,7 +268,7 @@ def get_current_user(
         ):
 
             print(
-                "❌ INVALID USER ID IN JWT"
+                "[AUTH] INVALID USER ID IN JWT"
             )
 
             raise credentials_exception
@@ -277,7 +277,7 @@ def get_current_user(
 
         print("")
         print("==========================================")
-        print("❌ JWT DECODE ERROR")
+        print("[ERROR] JWT DECODE ERROR")
         print("==========================================")
         print(
             "Error type:",
@@ -306,7 +306,7 @@ def get_current_user(
     if user is None:
 
         print(
-            "❌ USER NOT FOUND:",
+            "[AUTH] USER NOT FOUND:",
             user_id
         )
 
@@ -318,7 +318,7 @@ def get_current_user(
 
     print("")
     print("==========================================")
-    print("✅ AUTHENTICATION SUCCESS")
+    print("[OK] AUTHENTICATION SUCCESS")
     print("==========================================")
     print(
         "Authenticated user:",
@@ -349,7 +349,7 @@ def require_admin(
 
     print("")
     print("==========================================")
-    print("👑 ADMIN AUTHORIZATION CHECK")
+    print("[AUTH] ADMIN AUTHORIZATION CHECK")
     print("==========================================")
     print(
         "User:",
@@ -363,7 +363,7 @@ def require_admin(
     if current_user.role != "admin":
 
         print(
-            "❌ ADMIN ACCESS DENIED"
+            "[AUTH] ADMIN ACCESS DENIED"
         )
 
         raise HTTPException(
@@ -372,7 +372,7 @@ def require_admin(
         )
 
     print(
-        "✅ ADMIN ACCESS GRANTED"
+        "[OK] ADMIN ACCESS GRANTED"
     )
 
     return current_user
@@ -390,7 +390,7 @@ def require_support_agent(
 
     print("")
     print("==========================================")
-    print("🎧 SUPPORT AGENT AUTHORIZATION CHECK")
+    print("[AUTH] SUPPORT AGENT AUTHORIZATION CHECK")
     print("==========================================")
     print(
         "User:",
@@ -407,7 +407,7 @@ def require_support_agent(
     ]:
 
         print(
-            "❌ SUPPORT ACCESS DENIED"
+            "[AUTH] SUPPORT ACCESS DENIED"
         )
 
         raise HTTPException(
@@ -416,7 +416,7 @@ def require_support_agent(
         )
 
     print(
-        "✅ SUPPORT ACCESS GRANTED"
+        "[OK] SUPPORT ACCESS GRANTED"
     )
 
     return current_user

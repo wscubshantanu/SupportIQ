@@ -1,16 +1,12 @@
+from pathlib import Path
 import joblib
 
-category_model = joblib.load(
-    r"C:\Users\shantanu\OneDrive\Desktop\SupportIQ\ml\models\category_model.pkl"
-)
+BASE_DIR = Path(__file__).resolve().parent.parent
+MODEL_DIR = BASE_DIR / "ml" / "models"
 
-priority_model = joblib.load(
-    r"C:\Users\shantanu\OneDrive\Desktop\SupportIQ\ml\models\priority_model.pkl"
-)
-
-sentiment_model = joblib.load(
-    r"C:\Users\shantanu\OneDrive\Desktop\SupportIQ\ml\models\sentiment_model.pkl"
-)
+category_model = joblib.load(MODEL_DIR / "category_model.pkl")
+priority_model = joblib.load(MODEL_DIR / "priority_model.pkl")
+sentiment_model = joblib.load(MODEL_DIR / "sentiment_model.pkl")
 
 text = "I cannot login to my account and need help urgently"
 

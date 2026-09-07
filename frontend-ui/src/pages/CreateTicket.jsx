@@ -1,30 +1,34 @@
 // ==========================================
-// SupportIQ - Create Ticket
+// SupportIQ - Create Ticket with Real-Time AI Preview
 // ==========================================
 
-import { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "../services/api";
+import Layout from "../components/Layout";
+import api, { clientPredictTicket } from "../services/api";
 
 function CreateTicket() {
     const navigate = useNavigate();
 
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
-    const [priority, setPriority] = useState("Medium");
-
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState("");
     const [messageType, setMessageType] = useState("success");
+    const [createdTicket, setCreatedTicket] = useState(null);
 
-    // ==========================================
-    // CREATE TICKET
-    // ==========================================
+    // Live AI Preview as user types
+    const livePrediction = useMemo(() => {
+        if (!title.trim() && !description.trim()) {
+            return null;
+        }
+        return clientPredictTicket(title, description);
+    }, [title, description]);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-
         setMessage("");
+        setCreatedTicket(null);
 
         if (!title.trim()) {
             setMessageType("error");
@@ -41,324 +45,243 @@ function CreateTicket() {
         try {
             setLoading(true);
 
-            console.log("==========================================");
-            console.log("🔥 CREATE TICKET");
-            console.log("==========================================");
-
             const requestData = {
                 title: title.trim(),
                 description: description.trim(),
-                priority: priority,
             };
 
-            console.log("Request:", requestData);
-
-            const response = await api.post(
-                "/tickets/",
-                requestData
-            );
-
-            console.log("✅ TICKET CREATED");
-            console.log("Response:", response.data);
+            const response = await api.post("/tickets/", requestData);
 
             setMessageType("success");
-
-            setMessage(
-                `Ticket #${response.data.id} created successfully.`
-            );
+            setMessage(`Ticket #${response.data.id} created & analyzed successfully by AI.`);
+            setCreatedTicket(response.data);
 
             setTitle("");
             setDescription("");
-            setPriority("Medium");
-
         } catch (error) {
-            console.error(
-                "❌ CREATE TICKET ERROR:",
-                error
-            );
-
+            console.error("Create ticket error:", error);
             const detail = error.response?.data?.detail;
-
             setMessageType("error");
-
             if (Array.isArray(detail)) {
-                setMessage(
-                    detail
-                        .map((item) => {
-                            const location =
-                                Array.isArray(item.loc)
-                                    ? item.loc.join(" → ")
-                                    : "field";
-
-                            return `${location}: ${item.msg}`;
-                        })
-                        .join(" | ")
-                );
+                setMessage(detail.map((i) => i.msg).join(" | "));
             } else if (typeof detail === "string") {
                 setMessage(detail);
             } else {
-                setMessage(
-                    "Failed to create ticket."
-                );
+                setMessage("Failed to create ticket. Please check your connection.");
             }
-
         } finally {
             setLoading(false);
         }
     };
 
-    // ==========================================
-    // LOGOUT
-    // ==========================================
+    const samplePrompts = [
+        {
+            label: "Technical Bug",
+            title: "Database connection timeout during checkout",
+            desc: "Customers in the EU region are receiving 504 gateway timeout errors when clicking Place Order on checkout."
+        },
+        {
+            label: "Billing Issue",
+            title: "Duplicate subscription charge on invoice",
+            desc: "I was billed twice for the annual Enterprise license on my credit card. Please issue an immediate refund."
+        },
+        {
+            label: "Account Access",
+            title: "Locked out of account after password reset",
+            desc: "The reset email verification link expires before I can type the new password. I urgently need access."
+        }
+    ];
 
-    const logout = () => {
-        localStorage.removeItem("token");
-        localStorage.removeItem("role");
-        localStorage.removeItem("user");
-
-        navigate("/");
+    const applySample = (sample) => {
+        setTitle(sample.title);
+        setDescription(sample.desc);
     };
 
-    // ==========================================
-    // UI
-    // ==========================================
-
     return (
-        <div className="min-h-screen bg-gray-100">
-
-            {/* ==================================
-                NAVBAR
-            ================================== */}
-
-            <nav className="bg-white border-b shadow-sm">
-
-                <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-
+        <Layout>
+            <div className="max-w-4xl mx-auto">
+                {/* Header */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                     <div>
-                        <h1 className="text-2xl font-bold text-blue-600">
-                            SupportIQ
+                        <button
+                            onClick={() => navigate("/tickets")}
+                            className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-blue-600 transition mb-2"
+                        >
+                            &larr; Back to Ticket Queue
+                        </button>
+                        <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+                            Create Support Ticket
                         </h1>
-
-                        <p className="text-sm text-gray-500">
-                            Customer Support Intelligence
+                        <p className="text-sm text-slate-500 mt-1">
+                            Submit a customer request for instant Machine Learning classification & sentiment triage.
                         </p>
                     </div>
 
-                    <div className="flex items-center gap-3">
-
-                        <button
-                            onClick={() =>
-                                navigate("/dashboard")
-                            }
-                            className="px-4 py-2 text-gray-700 hover:text-blue-600"
-                        >
-                            Dashboard
-                        </button>
-
-                        <button
-                            onClick={() =>
-                                navigate("/tickets")
-                            }
-                            className="px-4 py-2 text-gray-700 hover:text-blue-600"
-                        >
-                            Tickets
-                        </button>
-
-                        <button
-                            onClick={() =>
-                                navigate("/analytics")
-                            }
-                            className="px-4 py-2 text-gray-700 hover:text-blue-600"
-                        >
-                            Analytics
-                        </button>
-
-                        <button
-                            onClick={logout}
-                            className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
-                        >
-                            Logout
-                        </button>
-
+                    {/* Sample prompt shortcuts */}
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className="text-[11px] font-bold text-slate-400 mr-1 uppercase">Try Template:</span>
+                        {samplePrompts.map((s) => (
+                            <button
+                                key={s.label}
+                                type="button"
+                                onClick={() => applySample(s)}
+                                className="px-2.5 py-1 rounded-lg bg-white border border-slate-200 hover:border-blue-400 text-slate-700 text-xs font-semibold hover:text-blue-600 transition shadow-sm cursor-pointer"
+                            >
+                                {s.label}
+                            </button>
+                        ))}
                     </div>
-
                 </div>
 
-            </nav>
-
-            {/* ==================================
-                MAIN
-            ================================== */}
-
-            <main className="max-w-4xl mx-auto px-6 py-10">
-
-                {/* BACK */}
-
-                <button
-                    onClick={() =>
-                        navigate("/tickets")
-                    }
-                    className="mb-6 text-blue-600 hover:text-blue-800 font-semibold"
-                >
-                    ← Back to Tickets
-                </button>
-
-                {/* CARD */}
-
-                <div className="bg-white rounded-2xl shadow-sm border p-8">
-
-                    <div className="mb-8">
-
-                        <h1 className="text-3xl font-bold text-gray-900">
-                            Create New Ticket
-                        </h1>
-
-                        <p className="text-gray-600 mt-2">
-                            Submit a customer support issue for AI-powered analysis.
-                        </p>
-
-                    </div>
-
-                    {/* MESSAGE */}
-
-                    {message && (
-                        <div
-                            className={
-                                messageType === "success"
-                                    ? "mb-6 bg-green-50 border border-green-200 text-green-700 rounded-lg px-5 py-4"
-                                    : "mb-6 bg-red-50 border border-red-200 text-red-700 rounded-lg px-5 py-4"
-                            }
-                        >
-                            {message}
+                {/* Status Messages */}
+                {message && (
+                    <div
+                        className={`mb-6 p-4 rounded-xl text-xs font-semibold flex items-center justify-between gap-3 ${
+                            messageType === "success"
+                                ? "bg-emerald-50 border border-emerald-200 text-emerald-800"
+                                : "bg-rose-50 border border-rose-200 text-rose-800"
+                        }`}
+                    >
+                        <div className="flex items-center gap-2">
+                            <span>{messageType === "success" ? "✅" : "⚠️"}</span>
+                            <span>{message}</span>
                         </div>
-                    )}
-
-                    {/* FORM */}
-
-                    <form onSubmit={handleSubmit}>
-
-                        {/* TITLE */}
-
-                        <div className="mb-6">
-
-                            <label className="block font-semibold text-gray-700 mb-2">
-                                Ticket Title
-                            </label>
-
-                            <input
-                                type="text"
-                                value={title}
-                                onChange={(event) =>
-                                    setTitle(event.target.value)
-                                }
-                                placeholder="Example: Cannot login to account"
-                                disabled={loading}
-                                className="w-full border border-gray-300 rounded-xl p-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            />
-
-                        </div>
-
-                        {/* DESCRIPTION */}
-
-                        <div className="mb-6">
-
-                            <label className="block font-semibold text-gray-700 mb-2">
-                                Description
-                            </label>
-
-                            <textarea
-                                value={description}
-                                onChange={(event) =>
-                                    setDescription(event.target.value)
-                                }
-                                placeholder="Describe the customer's problem..."
-                                rows={7}
-                                disabled={loading}
-                                className="w-full border border-gray-300 rounded-xl p-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            />
-
-                        </div>
-
-                        {/* PRIORITY */}
-
-                        <div className="mb-8">
-
-                            <label className="block font-semibold text-gray-700 mb-2">
-                                Priority
-                            </label>
-
-                            <select
-                                value={priority}
-                                onChange={(event) =>
-                                    setPriority(event.target.value)
-                                }
-                                disabled={loading}
-                                className="w-full border border-gray-300 rounded-xl p-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        {createdTicket && (
+                            <button
+                                onClick={() => navigate(`/tickets/${createdTicket.id}`)}
+                                className="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold transition shadow-sm cursor-pointer"
                             >
+                                View AI Insights &rarr;
+                            </button>
+                        )}
+                    </div>
+                )}
 
-                                <option value="Low">
-                                    Low
-                                </option>
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    {/* Main Form */}
+                    <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8">
+                        <form onSubmit={handleSubmit} className="space-y-6">
+                            <div>
+                                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
+                                    Ticket Subject / Title <span className="text-rose-500">*</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    value={title}
+                                    onChange={(e) => setTitle(e.target.value)}
+                                    placeholder="e.g. Cannot access account after recent update"
+                                    disabled={loading}
+                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-900 text-sm placeholder-slate-400 focus:bg-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition"
+                                />
+                            </div>
 
-                                <option value="Medium">
-                                    Medium
-                                </option>
-
-                                <option value="High">
-                                    High
-                                </option>
-
-                                <option value="Critical">
-                                    Critical
-                                </option>
-
-                            </select>
-
-                            <p className="text-sm text-gray-500 mt-2">
-                                The AI model will analyze the ticket and determine its final priority, category and sentiment.
-                            </p>
-
-                        </div>
-
-                        {/* BUTTONS */}
-
-                        <div className="flex flex-wrap gap-4">
+                            <div>
+                                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
+                                    Customer Message / Description <span className="text-rose-500">*</span>
+                                </label>
+                                <textarea
+                                    value={description}
+                                    onChange={(e) => setDescription(e.target.value)}
+                                    placeholder="Describe the issue reported by the customer in detail..."
+                                    rows={7}
+                                    disabled={loading}
+                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-4 text-slate-900 text-sm placeholder-slate-400 focus:bg-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition leading-relaxed"
+                                />
+                            </div>
 
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="bg-blue-600 text-white px-8 py-3 rounded-xl font-semibold hover:bg-blue-700 disabled:opacity-50"
+                                className="w-full py-3.5 px-6 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm transition shadow-lg shadow-blue-600/25 disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
                             >
-                                {loading
-                                    ? "Creating Ticket..."
-                                    : "Create Ticket"}
+                                {loading ? (
+                                    <>
+                                        <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                                        Processing AI Inference...
+                                    </>
+                                ) : (
+                                    <>
+                                        <span>🚀</span> Submit & Predict with AI
+                                    </>
+                                )}
                             </button>
+                        </form>
+                    </div>
 
-                            <button
-                                type="button"
-                                disabled={loading}
-                                onClick={() =>
-                                    navigate("/tickets")
-                                }
-                                className="bg-gray-200 text-gray-800 px-8 py-3 rounded-xl font-semibold hover:bg-gray-300"
-                            >
-                                Cancel
-                            </button>
+                    {/* Real-time AI Preview Sidebar */}
+                    <div className="space-y-6">
+                        <div className="bg-gradient-to-br from-slate-900 to-indigo-950 text-white rounded-2xl p-6 shadow-xl border border-slate-800">
+                            <div className="flex items-center justify-between mb-4">
+                                <h3 className="text-xs font-bold uppercase tracking-wider text-blue-400 flex items-center gap-1.5">
+                                    <span>⚡</span> Live ML Preview
+                                </h3>
+                                <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 font-mono">
+                                    Real-Time
+                                </span>
+                            </div>
 
+                            {livePrediction ? (
+                                <div className="space-y-4 animate-fade-in">
+                                    <div>
+                                        <span className="text-[11px] text-slate-400 uppercase font-semibold">Predicted Category</span>
+                                        <div className="text-base font-bold text-white mt-0.5 flex items-center gap-2">
+                                            <span className="w-2 h-2 rounded-full bg-blue-400"></span>
+                                            {livePrediction.category}
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <span className="text-[11px] text-slate-400 uppercase font-semibold">Predicted Priority</span>
+                                        <div className="mt-1">
+                                            <span className={`px-2.5 py-1 rounded-md text-xs font-bold border ${
+                                                livePrediction.priority === "Critical" ? "bg-rose-500/20 border-rose-500/40 text-rose-300" :
+                                                livePrediction.priority === "High" ? "bg-amber-500/20 border-amber-500/40 text-amber-300" :
+                                                livePrediction.priority === "Medium" ? "bg-blue-500/20 border-blue-500/40 text-blue-300" :
+                                                "bg-emerald-500/20 border-emerald-500/40 text-emerald-300"
+                                            }`}>
+                                                {livePrediction.priority}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <span className="text-[11px] text-slate-400 uppercase font-semibold">Detected Sentiment</span>
+                                        <div className="text-sm font-semibold text-slate-200 mt-0.5 flex items-center gap-1.5">
+                                            {livePrediction.sentiment === "Positive" ? "😊 Positive" :
+                                             livePrediction.sentiment === "Negative" ? "😟 Negative" : "😐 Neutral"}
+                                        </div>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="py-8 text-center text-slate-400 text-xs leading-relaxed">
+                                    Start typing a subject and message to watch the AI models analyze the text in real-time.
+                                </div>
+                            )}
                         </div>
 
-                    </form>
-
+                        {/* Model Specs Card */}
+                        <div className="bg-white rounded-2xl border border-slate-200 p-5 text-xs space-y-2.5">
+                            <h4 className="font-bold text-slate-900">Supported ML Models</h4>
+                            <ul className="space-y-1.5 text-slate-600">
+                                <li className="flex items-center gap-2">
+                                    <span className="text-blue-600 font-bold">&bull;</span>
+                                    <span><strong>Category:</strong> Technical, Billing, Account, General</span>
+                                </li>
+                                <li className="flex items-center gap-2">
+                                    <span className="text-blue-600 font-bold">&bull;</span>
+                                    <span><strong>Priority:</strong> Low, Medium, High, Critical</span>
+                                </li>
+                                <li className="flex items-center gap-2">
+                                    <span className="text-blue-600 font-bold">&bull;</span>
+                                    <span><strong>Sentiment:</strong> Positive, Neutral, Negative</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
-
-            </main>
-
-        </div>
+            </div>
+        </Layout>
     );
 }
-
-// ==========================================
-// DEFAULT EXPORT
-// ==========================================
 
 export default CreateTicket;

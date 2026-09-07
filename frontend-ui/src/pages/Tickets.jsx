@@ -4,7 +4,7 @@
 
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import Layout from "../components/Layout";
 import api from "../services/api";
 
 
@@ -678,88 +678,8 @@ function Tickets() {
     // ==========================================
 
     return (
-
-        <div className="min-h-screen bg-gray-100">
-
-
-            {/* ==================================
-                NAVBAR
-            ================================== */}
-
-            <nav className="bg-white border-b shadow-sm">
-
-                <div className="max-w-7xl mx-auto px-6 py-4 flex flex-col md:flex-row md:justify-between md:items-center gap-4">
-
-                    <div>
-
-                        <h1 className="text-2xl font-bold text-blue-600">
-                            SupportIQ
-                        </h1>
-
-                        <p className="text-sm text-gray-500">
-                            Customer Support Intelligence
-                        </p>
-
-                    </div>
-
-
-                    <div className="flex items-center gap-2 flex-wrap">
-
-                        <button
-                            onClick={() =>
-                                navigate(
-                                    "/dashboard"
-                                )
-                            }
-                            className="px-4 py-2 text-gray-700 hover:text-blue-600"
-                        >
-                            Dashboard
-                        </button>
-
-
-                        <button
-                            onClick={() =>
-                                navigate(
-                                    "/tickets"
-                                )
-                            }
-                            className="px-4 py-2 text-blue-600 font-semibold"
-                        >
-                            Tickets
-                        </button>
-
-
-                        <button
-                            onClick={() =>
-                                navigate(
-                                    "/analytics"
-                                )
-                            }
-                            className="px-4 py-2 text-gray-700 hover:text-blue-600"
-                        >
-                            Analytics
-                        </button>
-
-
-                        <button
-                            onClick={logout}
-                            className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
-                        >
-                            Logout
-                        </button>
-
-                    </div>
-
-                </div>
-
-            </nav>
-
-
-            {/* ==================================
-                MAIN
-            ================================== */}
-
-            <main className="max-w-7xl mx-auto px-6 py-8">
+        <Layout>
+            <div className="max-w-7xl mx-auto">
 
 
                 {/* TITLE */}
@@ -1281,10 +1201,8 @@ function Tickets() {
                     )}
 
                 </div>
-
-            </main>
-
-        </div>
+            </div>
+        </Layout>
     );
 }
 

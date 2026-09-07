@@ -4,6 +4,7 @@
 
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import Layout from "../components/Layout";
 import api from "../services/api";
 
 function TicketDetails() {
@@ -253,68 +254,8 @@ function TicketDetails() {
     // ==========================================
 
     return (
-        <div className="min-h-screen bg-gray-100">
-
-            {/* ==================================
-                NAVBAR
-            ================================== */}
-
-            <nav className="bg-white border-b shadow-sm">
-
-                <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-
-                    <div>
-
-                        <h1 className="text-2xl font-bold text-blue-600">
-                            SupportIQ
-                        </h1>
-
-                        <p className="text-sm text-gray-500">
-                            AI-Powered Customer Support
-                        </p>
-
-                    </div>
-
-                    <div className="flex items-center gap-3">
-
-                        <button
-                            onClick={() =>
-                                navigate("/dashboard")
-                            }
-                            className="px-4 py-2 text-gray-700 hover:text-blue-600"
-                        >
-                            Dashboard
-                        </button>
-
-                        <button
-                            onClick={() =>
-                                navigate("/tickets")
-                            }
-                            className="px-4 py-2 text-gray-700 hover:text-blue-600"
-                        >
-                            Tickets
-                        </button>
-
-                        <button
-                            onClick={() =>
-                                navigate("/analytics")
-                            }
-                            className="px-4 py-2 text-gray-700 hover:text-blue-600"
-                        >
-                            Analytics
-                        </button>
-
-                    </div>
-
-                </div>
-
-            </nav>
-
-            {/* ==================================
-                MAIN
-            ================================== */}
-
-            <main className="max-w-6xl mx-auto px-6 py-10">
+        <Layout>
+            <div className="max-w-6xl mx-auto">
 
                 {/* BACK */}
 
@@ -661,9 +602,8 @@ function TicketDetails() {
 
                 </div>
 
-            </main>
-
-        </div>
+            </div>
+        </Layout>
     );
 }
 

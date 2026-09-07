@@ -35,211 +35,138 @@ function Register() {
         }
 
         if (password.length < 6) {
-            setError(
-                "Password must contain at least 6 characters."
-            );
+            setError("Password must contain at least 6 characters.");
             return;
         }
 
         try {
             setLoading(true);
 
-            console.log("🔥 REGISTER REQUEST");
+            await api.post("/auth/register", {
+                name: name.trim(),
+                email: email.trim(),
+                password,
+            });
 
-            const response = await api.post(
-                "/auth/register",
-                {
-                    name: name.trim(),
-                    email: email.trim(),
-                    password,
-                }
-            );
-
-            console.log(
-                "✅ REGISTER RESPONSE:",
-                response.data
-            );
-
-            setMessage(
-                "Registration successful. Redirecting to login..."
-            );
+            setMessage("Registration successful! Redirecting to login...");
 
             setTimeout(() => {
                 navigate("/login");
-            }, 1000);
+            }, 1200);
 
-        } catch (error) {
-            console.error(
-                "❌ REGISTER ERROR:",
-                error
-            );
-
-            const detail =
-                error.response?.data?.detail;
+        } catch (err) {
+            console.error("Register error:", err);
+            const detail = err.response?.data?.detail;
 
             if (Array.isArray(detail)) {
-                setError(
-                    detail
-                        .map(
-                            (item) =>
-                                item.msg
-                        )
-                        .join(" | ")
-                );
-            } else if (
-                typeof detail === "string"
-            ) {
+                setError(detail.map((item) => item.msg).join(" | "));
+            } else if (typeof detail === "string") {
                 setError(detail);
-            } else if (
-                error.response?.status === 422
-            ) {
-                setError(
-                    "Invalid registration data."
-                );
             } else {
-                setError(
-                    "Registration failed. Please try again."
-                );
+                setError("Registration failed. Please try again.");
             }
-
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <div className="min-h-screen bg-gray-100 flex items-center justify-center px-6">
+        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 flex items-center justify-center px-4 py-12 relative overflow-hidden">
+            <div className="absolute -top-40 -right-40 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl pointer-events-none" />
 
-            <div className="w-full max-w-md">
-
-                <div className="bg-white rounded-2xl shadow-lg border p-8">
-
-                    <div className="text-center mb-8">
-
-                        <h1 className="text-4xl font-bold text-blue-600">
-                            SupportIQ
-                        </h1>
-
-                        <p className="text-gray-500 mt-2">
-                            Customer Support Intelligence
-                        </p>
-
+            <div className="w-full max-w-md relative z-10">
+                <div className="text-center mb-8">
+                    <div className="inline-flex items-center justify-center gap-2 px-3 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-400 text-xs font-semibold uppercase tracking-wider mb-4">
+                        <span className="w-2 h-2 rounded-full bg-blue-400"></span>
+                        New Account
                     </div>
+                    <h1 className="text-4xl font-extrabold text-white tracking-tight">
+                        Create <span className="text-blue-500">SupportIQ</span> Profile
+                    </h1>
+                    <p className="text-slate-400 text-sm mt-2">
+                        Get started with AI-assisted customer ticket management
+                    </p>
+                </div>
 
-                    <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                        Create Account
-                    </h2>
-
+                <div className="bg-slate-900/80 backdrop-blur-xl rounded-2xl shadow-2xl border border-slate-800 p-8">
                     {error && (
-                        <div className="mb-5 bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-3">
-                            {error}
+                        <div className="mb-5 bg-red-500/10 border border-red-500/30 text-red-400 text-xs rounded-xl px-4 py-3 flex items-center gap-2">
+                            <span>⚠️</span> {error}
                         </div>
                     )}
 
                     {message && (
-                        <div className="mb-5 bg-green-50 border border-green-200 text-green-700 rounded-lg px-4 py-3">
-                            {message}
+                        <div className="mb-5 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs rounded-xl px-4 py-3 flex items-center gap-2">
+                            <span>✅</span> {message}
                         </div>
                     )}
 
                     <form onSubmit={handleRegister}>
-
-                        <div className="mb-5">
-
-                            <label className="block font-semibold text-gray-700 mb-2">
-                                Name
+                        <div className="mb-4">
+                            <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
+                                Full Name
                             </label>
-
                             <input
                                 type="text"
                                 value={name}
-                                onChange={(event) =>
-                                    setName(
-                                        event.target.value
-                                    )
-                                }
-                                placeholder="Shantanu Kalhapure"
+                                onChange={(e) => setName(e.target.value)}
+                                placeholder="Alex Mercer"
                                 disabled={loading}
-                                className="w-full border border-gray-300 rounded-xl p-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                className="w-full bg-slate-950/60 border border-slate-800 rounded-xl px-4 py-3.5 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition"
                             />
-
                         </div>
 
-                        <div className="mb-5">
-
-                            <label className="block font-semibold text-gray-700 mb-2">
-                                Email
+                        <div className="mb-4">
+                            <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
+                                Email Address
                             </label>
-
                             <input
                                 type="email"
                                 value={email}
-                                onChange={(event) =>
-                                    setEmail(
-                                        event.target.value
-                                    )
-                                }
-                                placeholder="shantanu@gmail.com"
+                                onChange={(e) => setEmail(e.target.value)}
+                                placeholder="alex@company.com"
                                 disabled={loading}
-                                className="w-full border border-gray-300 rounded-xl p-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                className="w-full bg-slate-950/60 border border-slate-800 rounded-xl px-4 py-3.5 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition"
                             />
-
                         </div>
 
                         <div className="mb-6">
-
-                            <label className="block font-semibold text-gray-700 mb-2">
+                            <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
                                 Password
                             </label>
-
                             <input
                                 type="password"
                                 value={password}
-                                onChange={(event) =>
-                                    setPassword(
-                                        event.target.value
-                                    )
-                                }
+                                onChange={(e) => setPassword(e.target.value)}
                                 placeholder="Minimum 6 characters"
                                 disabled={loading}
-                                className="w-full border border-gray-300 rounded-xl p-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                className="w-full bg-slate-950/60 border border-slate-800 rounded-xl px-4 py-3.5 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition"
                             />
-
                         </div>
 
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full bg-blue-600 text-white py-4 rounded-xl font-semibold hover:bg-blue-700 disabled:opacity-50"
+                            className="w-full bg-blue-600 hover:bg-blue-500 text-white py-3.5 rounded-xl text-sm font-bold transition shadow-lg shadow-blue-600/25 disabled:opacity-50 cursor-pointer"
                         >
-                            {loading
-                                ? "Creating account..."
-                                : "Register"}
+                            {loading ? "Creating Profile..." : "Complete Registration"}
                         </button>
-
                     </form>
 
-                    <div className="text-center mt-6">
-
-                        <p className="text-gray-600">
-
-                            Already have an account?{" "}
-
+                    <div className="text-center mt-6 pt-5 border-t border-slate-800/80">
+                        <p className="text-xs text-slate-400">
+                            Already registered?{" "}
                             <Link
                                 to="/login"
-                                className="text-blue-600 font-semibold hover:underline"
+                                className="text-blue-400 font-bold hover:text-blue-300 hover:underline transition"
                             >
-                                Login
+                                Back to Login
                             </Link>
-
                         </p>
-
                     </div>
-
                 </div>
-
             </div>
-
         </div>
     );
 }

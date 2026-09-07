@@ -96,7 +96,7 @@ def login(
 ):
 
     print("\n==========================================")
-    print("🔥 LOGIN REQUEST")
+    print("[AUTH] LOGIN REQUEST")
     print("EMAIL:", login_data.email)
     print("==========================================")
 
@@ -114,7 +114,7 @@ def login(
 
     if user is None:
 
-        print("❌ USER NOT FOUND")
+        print("[AUTH] USER NOT FOUND")
 
         raise HTTPException(
             status_code=401,
@@ -139,7 +139,7 @@ def login(
 
     if not password_valid:
 
-        print("❌ PASSWORD INVALID")
+        print("[AUTH] PASSWORD INVALID")
 
         raise HTTPException(
             status_code=401,
@@ -164,7 +164,7 @@ def login(
         token_data
     )
 
-    print("✅ ACCESS TOKEN CREATED")
+    print("[OK] ACCESS TOKEN CREATED")
     print("TOKEN LENGTH:", len(access_token))
     print("TOKEN USER ID:", user.id)
     print("TOKEN ROLE:", user.role)

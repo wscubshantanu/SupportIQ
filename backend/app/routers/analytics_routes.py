@@ -28,7 +28,7 @@ def analytics_overview(
 ):
 
     print("\n==========================================")
-    print("🔥 ANALYTICS ENDPOINT")
+    print("[INFO] ANALYTICS ENDPOINT")
     print("Authenticated user:", current_user.email)
     print("Role:", current_user.role)
     print("==========================================")
@@ -171,6 +171,10 @@ def analytics_overview(
     result = {
 
         "total_tickets": total_tickets,
+        "open_tickets": open_tickets,
+        "in_progress_tickets": in_progress_tickets,
+        "resolved_tickets": resolved_tickets,
+        "closed_tickets": closed_tickets,
 
         "status": {
 
@@ -209,7 +213,7 @@ def analytics_overview(
     print("Analytics:", result)
 
     print("==========================================")
-    print("🔥 ANALYTICS SUCCESS")
+    print("[INFO] ANALYTICS SUCCESS")
     print("==========================================\n")
 
     return result

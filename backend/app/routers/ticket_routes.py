@@ -55,7 +55,7 @@ def create_ticket(
 
     print("")
     print("==========================================")
-    print("🔥 CREATE TICKET")
+    print("[INFO] CREATE TICKET")
     print("==========================================")
 
     print("User:", current_user.email)
@@ -83,7 +83,7 @@ def create_ticket(
     except Exception as error:
 
         print(
-            "❌ AI PREDICTION ERROR:",
+            "[ERROR] AI PREDICTION ERROR:",
             error
         )
 
@@ -158,7 +158,7 @@ def create_ticket(
         db.rollback()
 
         print(
-            "❌ DATABASE ERROR:",
+            "[ERROR] DATABASE ERROR:",
             error
         )
 
@@ -174,7 +174,7 @@ def create_ticket(
 
     print("")
     print("==========================================")
-    print("✅ TICKET CREATED")
+    print("[OK] TICKET CREATED")
     print("==========================================")
 
     print("Ticket ID:", new_ticket.id)
@@ -206,7 +206,7 @@ def get_tickets(
 
     print("")
     print("==========================================")
-    print("🔥 GET TICKETS")
+    print("[INFO] GET TICKETS")
     print("==========================================")
 
     print("User:", current_user.email)
@@ -275,7 +275,7 @@ def get_ticket_insights(
 
     print("")
     print("==========================================")
-    print("🔥 AI TICKET INSIGHTS")
+    print("[INFO] AI TICKET INSIGHTS")
     print("==========================================")
 
     print("Ticket ID:", ticket_id)
@@ -467,7 +467,7 @@ def get_ticket_insights(
 
     print("")
     print("==========================================")
-    print("✅ AI INSIGHTS GENERATED")
+    print("[OK] AI INSIGHTS GENERATED")
     print("==========================================")
 
     print("Ticket:", ticket.id)
@@ -553,7 +553,7 @@ def update_ticket_status(
 
     print("")
     print("==========================================")
-    print("🔥 UPDATE TICKET STATUS")
+    print("[INFO] UPDATE TICKET STATUS")
     print("==========================================")
 
     print("Ticket ID:", ticket_id)
@@ -638,7 +638,7 @@ def update_ticket_status(
         db.rollback()
 
         print(
-            "❌ STATUS UPDATE DATABASE ERROR:",
+            "[ERROR] STATUS UPDATE DATABASE ERROR:",
             error
         )
 
@@ -654,7 +654,7 @@ def update_ticket_status(
 
     print("")
     print("==========================================")
-    print("✅ STATUS UPDATED SUCCESSFULLY")
+    print("[OK] STATUS UPDATED SUCCESSFULLY")
     print("==========================================")
 
     print("Ticket ID:", ticket.id)
@@ -683,7 +683,7 @@ def delete_ticket(
 
     print("")
     print("==========================================")
-    print("🔥 DELETE TICKET")
+    print("[INFO] DELETE TICKET")
     print("==========================================")
 
     print("Ticket ID:", ticket_id)
@@ -729,7 +729,7 @@ def delete_ticket(
         db.rollback()
 
         print(
-            "❌ DELETE ERROR:",
+            "[ERROR] DELETE ERROR:",
             error
         )
 
@@ -740,7 +740,7 @@ def delete_ticket(
 
 
     print(
-        f"✅ Ticket {ticket_id} deleted"
+        f"[OK] Ticket {ticket_id} deleted"
     )
 
 
